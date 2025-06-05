@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
@@ -20,7 +19,7 @@ var (
 
 const (
 	GAME_TITLE       = "Flappy Bird"
-	SCALE_BACKGROUND = 1.75
+	SCALE_BACKGROUND = 1.5
 	TARGET_RATE      = 60
 )
 
@@ -102,6 +101,9 @@ func updateRandomBackground(g *Game) {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
+	//lembrando que os canos devem ser desenhados antes do background
+	//player deve ser desenhado depois
+
 	//draw background
 	opBg := &ebiten.DrawImageOptions{}
 	opBg.GeoM.Scale(1, 1)
@@ -118,7 +120,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	g.ground.Draw(screen)
 
 	// draw game infos
-	ebitenutil.DebugPrint(screen, fmt.Sprintf("TPS: %0.2f", ebiten.ActualTPS()))
+	//ebitenutil.DebugPrint(screen, fmt.Sprintf("TPS: %0.2f", ebiten.ActualTPS()))
 }
 
 func drawCentralizedImage(image *ebiten.Image, screen *ebiten.Image) {
@@ -142,6 +144,9 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 	return bb.Dx(), bb.Dy()
 }
 
+// fazer uma forma dinamica para escalar esse background de acordo
+// com o tamanho da tela do usuario
+// talvez fazer dinamico para quando o usuario mudar de um monitor para outro
 func setScreenProperties(g *Game) {
 	bb := g.assets.backgroundDay.Bounds()
 
@@ -158,6 +163,7 @@ func setGameProperties() {
 	ebiten.SetTPS(TARGET_RATE)
 }
 
+// refatorar para usar packages, não apenas na main
 func main() {
 	eg, g := NewGame()
 
