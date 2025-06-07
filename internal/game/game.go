@@ -1,15 +1,18 @@
-package main
+package game
 
 import (
 	"fmt"
 	"image"
 	_ "image/png"
-	"log"
 	"math/rand"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+
+	"leandro.com/v2/internal/entities"
+	"leandro.com/v2/internal/enums"
+	"leandro.com/v2/internal/utils"
 )
 
 var (
@@ -24,21 +27,28 @@ const (
 )
 
 type Game struct {
-	scene Scene
+	scene enums.Scene
 	speed float64
 
-	ground *Ground
-	assets *Assets
-	audio  *Audio
+	ground *entities.Ground
+	assets *utils.Assets
+	audio  *utils.Audio
+}
+
+func (g *Game) Speed() float64 {
+	return g.speed
 }
 
 func (g *Game) initGame() {
 	g.speed = 0.75
-	g.scene = SceneMenu
+	g.scene = enums.SceneMenu
 
-	g.ground = NewGround()
-	g.assets = NewAssets()
-	g.audio = NewAudio()
+	g.ground = entities.NewGround()
+	g.assets = utils.NewAssets()
+	g.audio = utils.NewAudio()
+
+	setScreenProperties(g)
+	setGameProperties()
 }
 
 func NewGame() (ebiten.Game, *Game) {
@@ -54,37 +64,37 @@ func (g *Game) Update() error {
 	updateRandomBackground(g)
 
 	switch g.scene {
-	case SceneMenu:
+	case enums.SceneMenu:
 		if inpututil.IsKeyJustPressed(ebiten.KeySpace) || inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-			if err := g.audio.swooshPlayer.Rewind(); err != nil {
+			if err := g.audio.SwooshPlayer.Rewind(); err != nil {
 				return err
 			}
-			g.audio.swooshPlayer.Play()
-			g.scene = SceneGame
+			g.audio.SwooshPlayer.Play()
+			g.scene = enums.SceneGame
 			fmt.Println("Scene: ", g.scene)
 		}
-	case SceneGame:
+	case enums.SceneGame:
 		if inpututil.IsKeyJustPressed(ebiten.KeySpace) || inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-			if err := g.audio.diePlayer.Rewind(); err != nil {
+			if err := g.audio.DiePlayer.Rewind(); err != nil {
 				return err
 			}
-			g.audio.diePlayer.Play()
-			g.scene = SceneGameOver
+			g.audio.DiePlayer.Play()
+			g.scene = enums.SceneGameOver
 			fmt.Println("Scene: ", g.scene)
 		}
-	case SceneGameOver:
+	case enums.SceneGameOver:
 		if inpututil.IsKeyJustPressed(ebiten.KeySpace) || inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-			if err := g.audio.pointPlayer.Rewind(); err != nil {
+			if err := g.audio.PointPlayer.Rewind(); err != nil {
 				return err
 			}
-			g.audio.pointPlayer.Play()
-			g.scene = SceneMenu
+			g.audio.PointPlayer.Play()
+			g.scene = enums.SceneMenu
 			fmt.Println("Scene: ", g.scene)
 			randomizeBackground = true
 		}
 	}
 
-	g.ground.Update(g)
+	g.ground.Update(g.speed, g.scene)
 	return nil
 }
 
@@ -92,9 +102,9 @@ func updateRandomBackground(g *Game) {
 	if randomizeBackground {
 		r := rand.New(rand.NewSource(time.Now().UnixNano()))
 		if r.Intn(2) == 0 {
-			background = g.assets.backgroundDay
+			background = g.assets.BackgroundDay
 		} else {
-			background = g.assets.backgroundNight
+			background = g.assets.BackgroundNight
 		}
 	}
 	randomizeBackground = false
@@ -111,10 +121,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	//draw scenes
 	switch g.scene {
-	case SceneMenu:
-		drawCentralizedImage(g.assets.menu, screen)
-	case SceneGameOver:
-		drawCentralizedImage(g.assets.gameOver, screen)
+	case enums.SceneMenu:
+		drawCentralizedImage(g.assets.Menu, screen)
+	case enums.SceneGameOver:
+		drawCentralizedImage(g.assets.GameOver, screen)
 	}
 
 	g.ground.Draw(screen)
@@ -140,7 +150,7 @@ func drawCentralizedImage(image *ebiten.Image, screen *ebiten.Image) {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	bb := g.assets.backgroundDay.Bounds()
+	bb := g.assets.BackgroundDay.Bounds()
 	return bb.Dx(), bb.Dy()
 }
 
@@ -148,29 +158,17 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 // com o tamanho da tela do usuario
 // talvez fazer dinamico para quando o usuario mudar de um monitor para outro
 func setScreenProperties(g *Game) {
-	bb := g.assets.backgroundDay.Bounds()
+	bb := g.assets.BackgroundDay.Bounds()
 
 	sw := float64(bb.Dx()) * SCALE_BACKGROUND
 	sh := float64(bb.Dy()) * SCALE_BACKGROUND
 
 	ebiten.SetWindowSize(int(sw), int(sh))
 	ebiten.SetWindowTitle(GAME_TITLE)
-	ebiten.SetWindowIcon([]image.Image{g.assets.icon})
+	ebiten.SetWindowIcon([]image.Image{g.assets.Icon})
 }
 
 func setGameProperties() {
 	ebiten.SetVsyncEnabled(false)
 	ebiten.SetTPS(TARGET_RATE)
-}
-
-// refatorar para usar packages, não apenas na main
-func main() {
-	eg, g := NewGame()
-
-	setScreenProperties(g)
-	setGameProperties()
-
-	if err := ebiten.RunGame(eg); err != nil {
-		log.Fatal(err)
-	}
 }

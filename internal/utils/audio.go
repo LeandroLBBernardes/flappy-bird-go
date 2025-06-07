@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"log"
@@ -15,10 +15,10 @@ const (
 type Audio struct {
 	audioContext *audio.Context
 
-	swooshPlayer *audio.Player
-	pointPlayer  *audio.Player
-	diePlayer    *audio.Player
-	wingPlayer   *audio.Player
+	SwooshPlayer *audio.Player
+	PointPlayer  *audio.Player
+	DiePlayer    *audio.Player
+	WingPlayer   *audio.Player
 }
 
 func NewAudio() *Audio {
@@ -72,22 +72,22 @@ func (a *Audio) init() {
 	}
 
 	// seta os players
-	a.swooshPlayer, err = a.audioContext.NewPlayerF32(swooshD)
+	a.SwooshPlayer, err = a.audioContext.NewPlayerF32(swooshD)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	a.pointPlayer, err = a.audioContext.NewPlayerF32(pointD)
+	a.PointPlayer, err = a.audioContext.NewPlayerF32(pointD)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	a.diePlayer, err = a.audioContext.NewPlayerF32(dieD)
+	a.DiePlayer, err = a.audioContext.NewPlayerF32(dieD)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	a.wingPlayer, err = a.audioContext.NewPlayerF32(wingD)
+	a.WingPlayer, err = a.audioContext.NewPlayerF32(wingD)
 	if err != nil {
 		log.Fatal(err)
 	}

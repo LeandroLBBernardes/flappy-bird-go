@@ -1,10 +1,11 @@
-package main
+package entities
 
 import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"leandro.com/v2/internal/enums"
 )
 
 const (
@@ -33,9 +34,9 @@ func (g *Ground) init() {
 	g.spriteWidth = g.sprite.Bounds().Dx()
 }
 
-func (g *Ground) Update(game *Game) {
-	if game.scene == SceneGame {
-		g.posX = g.posX - game.speed
+func (g *Ground) Update(gSpeed float64, gScene enums.Scene) {
+	if gScene == enums.SceneGame {
+		g.posX = g.posX - gSpeed
 
 		// a ideia é, quando o sprite sair da tela, reiniciar a posicao para o inicio
 		// dando ideia de looping

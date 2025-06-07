@@ -1,4 +1,4 @@
-package main
+package entities
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
@@ -25,7 +25,7 @@ func (p *Player) init() {
 
 }
 
-func (p *Player) Update(game *Game) {
+func (p *Player) Update() {
 
 }
 

@@ -1,4 +1,4 @@
-package main
+package enums
 
 type Color int
 
