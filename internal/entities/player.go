@@ -10,7 +10,6 @@ const (
 	PLAYER_UP_SPRITE_PATH   = "../../assets/sprites/{0}bird-upflap.png"
 )
 
-// TODO: Criar o player
 type Player struct {
 	posY float64
 }

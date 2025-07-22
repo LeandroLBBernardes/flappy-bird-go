@@ -1,14 +1,15 @@
 package enums
 
-type Scene int
+type SceneType int
 
 const (
-	SceneMenu Scene = iota
+	SceneMenu SceneType = iota
 	SceneGame
 	SceneGameOver
+	ScenePause
 )
 
-func (s Scene) String() string {
+func (s SceneType) String() string {
 	switch s {
 	case SceneMenu:
 		return "SceneMenu"
@@ -16,6 +17,8 @@ func (s Scene) String() string {
 		return "SceneGame"
 	case SceneGameOver:
 		return "SceneGameOver"
+	case ScenePause:
+		return "ScenePause"
 	default:
 		return "Unknown"
 	}

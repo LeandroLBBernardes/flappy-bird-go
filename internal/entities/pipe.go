@@ -8,7 +8,6 @@ const (
 	PIPE_SPRITE_PATH = "../../assets/sprites/pipe-green.png"
 )
 
-// TODO: Criar o pipe
 type Pipe struct {
 	posY float64
 	posx float64

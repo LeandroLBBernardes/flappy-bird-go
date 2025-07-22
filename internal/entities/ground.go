@@ -5,7 +5,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"leandro.com/v2/internal/enums"
+	"leandro.com/v2/internal/constants"
 )
 
 const (
@@ -34,15 +34,11 @@ func (g *Ground) init() {
 	g.spriteWidth = g.sprite.Bounds().Dx()
 }
 
-func (g *Ground) Update(gSpeed float64, gScene enums.Scene) {
-	if gScene == enums.SceneGame {
-		g.posX = g.posX - gSpeed
+func (g *Ground) Update() {
+	g.posX = g.posX - constants.GAME_SPEED
 
-		// a ideia é, quando o sprite sair da tela, reiniciar a posicao para o inicio
-		// dando ideia de looping
-		if g.posX <= -float64(g.spriteWidth) {
-			g.posX += float64(g.spriteWidth)
-		}
+	if g.posX <= -float64(g.spriteWidth) {
+		g.posX += float64(g.spriteWidth)
 	}
 }
 
@@ -50,10 +46,6 @@ func (g *Ground) Draw(screen *ebiten.Image) {
 	posY := float64(screen.Bounds().Dy() - g.sprite.Bounds().Dy())
 	screenWidth := float64(screen.Bounds().Dx())
 
-	// x inicialmente começa com 0
-	// screenWidth tem uns 640px
-	// desenhha quantos sprites forem precisos para cobrir a tela
-	// e continuar com a ideia de infinito
 	for x := g.posX; x < screenWidth; x += float64(g.spriteWidth) {
 		opG := &ebiten.DrawImageOptions{}
 		opG.GeoM.Reset()

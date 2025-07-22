@@ -8,10 +8,11 @@ import (
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 
+	"leandro.com/v2/internal/constants"
 	"leandro.com/v2/internal/entities"
 	"leandro.com/v2/internal/enums"
+	"leandro.com/v2/internal/scenes"
 	"leandro.com/v2/internal/utils"
 )
 
@@ -20,36 +21,15 @@ var (
 	background          *ebiten.Image
 )
 
-const (
-	GAME_TITLE       = "Flappy Bird"
-	SCALE_BACKGROUND = 1.5
-	TARGET_RATE      = 60
-	GAME_SPEED       = 0.75
-)
-
 type Game struct {
-	scene enums.Scene
-	speed float64
+	scene        enums.SceneType
+	speed        float64
+	currentScene scenes.Scene
 
 	ground *entities.Ground
+
 	assets *utils.Assets
 	audio  *utils.Audio
-}
-
-func (g *Game) Speed() float64 {
-	return g.speed
-}
-
-func (g *Game) initGame() {
-	g.speed = GAME_SPEED
-	g.scene = enums.SceneMenu
-
-	g.ground = entities.NewGround()
-	g.assets = utils.NewAssets()
-	g.audio = utils.NewAudio()
-
-	setScreenProperties(g)
-	setGameProperties()
 }
 
 func NewGame() (ebiten.Game, *Game) {
@@ -60,29 +40,70 @@ func NewGame() (ebiten.Game, *Game) {
 	return g, g
 }
 
+func (g *Game) initGame() {
+	g.speed = constants.GAME_SPEED
+	g.scene = enums.SceneMenu
+
+	g.ground = entities.NewGround()
+	g.assets = utils.NewAssets()
+	g.audio = utils.NewAudio()
+
+	g.ChangeScene(enums.SceneMenu)
+
+	setScreenProperties(g)
+	setGameProperties()
+}
+
+func (g *Game) GetAudio() *utils.Audio {
+	return g.audio
+}
+
+func (g *Game) GetAssets() *utils.Assets {
+	return g.assets
+}
+
+func (g *Game) GetGroundEntitie() *entities.Ground {
+	return g.ground
+}
+
 func (g *Game) Update() error {
 	updateRandomBackground(g)
 
-	switch g.scene {
-	case enums.SceneMenu:
-		if inpututil.IsKeyJustPressed(ebiten.KeySpace) || inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-			g.audio.PlayOnce(enums.SwooshAudio)
-			g.scene = enums.SceneGame
-		}
-	case enums.SceneGame:
-		if inpututil.IsKeyJustPressed(ebiten.KeySpace) || inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-			g.audio.PlayOnce(enums.DieAudio)
-			g.scene = enums.SceneGameOver
-		}
-	case enums.SceneGameOver:
-		if inpututil.IsKeyJustPressed(ebiten.KeySpace) || inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-			g.scene = enums.SceneMenu
-			randomizeBackground = true
-		}
-	}
+	g.currentScene.Update()
 
-	g.ground.Update(g.speed, g.scene)
 	return nil
+}
+
+func (g *Game) Draw(screen *ebiten.Image) {
+	drawBackground(screen)
+	g.currentScene.Draw(screen)
+
+	g.ground.Draw(screen)
+}
+
+func (g *Game) ChangeScene(sceneType enums.SceneType) {
+	g.currentScene = scenes.SceneFactory(sceneType, g)
+}
+
+func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
+	bb := g.assets.BackgroundDay.Bounds()
+	return bb.Dx(), bb.Dy()
+}
+
+func setScreenProperties(g *Game) {
+	bb := g.assets.BackgroundDay.Bounds()
+
+	sw := float64(bb.Dx()) * constants.SCALE_BACKGROUND
+	sh := float64(bb.Dy()) * constants.SCALE_BACKGROUND
+
+	ebiten.SetWindowSize(int(sw), int(sh))
+	ebiten.SetWindowTitle(constants.GAME_TITLE)
+	ebiten.SetWindowIcon([]image.Image{g.assets.Icon})
+}
+
+func setGameProperties() {
+	ebiten.SetVsyncEnabled(false)
+	ebiten.SetTPS(constants.TARGET_RATE)
 }
 
 func updateRandomBackground(g *Game) {
@@ -97,62 +118,8 @@ func updateRandomBackground(g *Game) {
 	randomizeBackground = false
 }
 
-func (g *Game) Draw(screen *ebiten.Image) {
-	//lembrando que os canos devem ser desenhados antes do background
-	//player deve ser desenhado depois
-
-	//draw background
+func drawBackground(screen *ebiten.Image) {
 	opBg := &ebiten.DrawImageOptions{}
 	opBg.GeoM.Scale(1, 1)
 	screen.DrawImage(background, opBg)
-
-	//draw scenes
-	switch g.scene {
-	case enums.SceneMenu:
-		drawCentralizedImage(g.assets.Menu, screen)
-	case enums.SceneGameOver:
-		drawCentralizedImage(g.assets.GameOver, screen)
-	}
-
-	g.ground.Draw(screen)
-
-	// draw game infos
-	//ebitenutil.DebugPrint(screen, fmt.Sprintf("TPS: %0.2f", ebiten.ActualTPS()))
-}
-
-func drawCentralizedImage(image *ebiten.Image, screen *ebiten.Image) {
-	op := &ebiten.DrawImageOptions{}
-
-	imageWidth := float64(image.Bounds().Dx())
-	imageHeight := float64(image.Bounds().Dy())
-	screenWidth := float64(screen.Bounds().Dx())
-	screenHeight := float64(screen.Bounds().Dy())
-	posX := (screenWidth - imageWidth) / 2
-	posY := (screenHeight - imageHeight) / 2
-
-	op.GeoM.Translate(posX, posY)
-	op.GeoM.Scale(1, 1)
-
-	screen.DrawImage(image, op)
-}
-
-func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	bb := g.assets.BackgroundDay.Bounds()
-	return bb.Dx(), bb.Dy()
-}
-
-func setScreenProperties(g *Game) {
-	bb := g.assets.BackgroundDay.Bounds()
-
-	sw := float64(bb.Dx()) * SCALE_BACKGROUND
-	sh := float64(bb.Dy()) * SCALE_BACKGROUND
-
-	ebiten.SetWindowSize(int(sw), int(sh))
-	ebiten.SetWindowTitle(GAME_TITLE)
-	ebiten.SetWindowIcon([]image.Image{g.assets.Icon})
-}
-
-func setGameProperties() {
-	ebiten.SetVsyncEnabled(false)
-	ebiten.SetTPS(TARGET_RATE)
 }

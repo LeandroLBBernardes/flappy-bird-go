@@ -13,6 +13,7 @@ const (
 	BACKGROUND_NIGHT_PATH = "../../assets/sprites/background-night.png"
 	MENU_PATH             = "../../assets/sprites/message.png"
 	GAMEOVER_PATH         = "../../assets/sprites/gameover.png"
+	PAUSE_PATH            = "../../assets/sprites/pause.png"
 )
 
 type Assets struct {
@@ -21,6 +22,7 @@ type Assets struct {
 	BackgroundNight *ebiten.Image
 	Menu            *ebiten.Image
 	GameOver        *ebiten.Image
+	Pause           *ebiten.Image
 }
 
 func NewAssets() *Assets {
@@ -35,6 +37,7 @@ func (a *Assets) loadAssets() {
 	loadImage(&a.BackgroundNight, BACKGROUND_NIGHT_PATH)
 	loadImage(&a.Menu, MENU_PATH)
 	loadImage(&a.GameOver, GAMEOVER_PATH)
+	loadImage(&a.Pause, PAUSE_PATH)
 }
 
 func loadImage(target **ebiten.Image, path string) {
