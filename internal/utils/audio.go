@@ -10,6 +10,11 @@ import (
 
 const (
 	SAMPLE_RATE = 44100
+
+	SWOOSH_AUDIO_PATH = "../../assets/audio/swoosh.wav"
+	POINT_AUDIO_PATH  = "../../assets/audio/point.wav"
+	DIE_AUDIO_PATH    = "../../assets/audio/die.wav"
+	WING_AUDIO_PATH   = "../../assets/audio/wing.wav"
 )
 
 type Audio struct {
@@ -23,72 +28,48 @@ type Audio struct {
 
 func NewAudio() *Audio {
 	a := &Audio{}
-	a.init()
+	a.loadAudios()
 	return a
 }
 
-func (a *Audio) init() {
+func (a *Audio) loadAudios() {
 	a.audioContext = audio.NewContext(SAMPLE_RATE)
 
-	swooshWav, err := os.Open("../../assets/audio/swoosh.wav")
+	loadAudio(&a.SwooshPlayer, a.audioContext, SWOOSH_AUDIO_PATH)
+	loadAudio(&a.PointPlayer, a.audioContext, POINT_AUDIO_PATH)
+	loadAudio(&a.DiePlayer, a.audioContext, DIE_AUDIO_PATH)
+	loadAudio(&a.WingPlayer, a.audioContext, WING_AUDIO_PATH)
+}
+
+func loadAudio(target **audio.Player, context *audio.Context, path string) {
+	wavFile := setAudio(path)
+	wavStream := decodeAudio(wavFile)
+	setPlayer(target, context, wavStream)
+}
+
+func setAudio(path string) *os.File {
+	wavFile, err := os.Open(path)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("error to file audio: %v", err)
 	}
 
-	pointWav, err := os.Open("../../assets/audio/point.wav")
+	return wavFile
+}
+
+func decodeAudio(wavFile *os.File) *wav.Stream {
+	wavStream, err := wav.DecodeF32(wavFile)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("error to file audio: %v", err)
 	}
 
-	dieWav, err := os.Open("../../assets/audio/die.wav")
+	return wavStream
+}
+
+func setPlayer(target **audio.Player, context *audio.Context, wavStream *wav.Stream) {
+	player, err := context.NewPlayerF32(wavStream)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("error to set player: %v", err)
 	}
 
-	wingWav, err := os.Open("../../assets/audio/wing.wav")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Decodifica o áudio WAV
-	swooshD, err := wav.DecodeF32(swooshWav)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	pointD, err := wav.DecodeF32(pointWav)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	dieD, err := wav.DecodeF32(dieWav)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	wingD, err := wav.DecodeF32(wingWav)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// seta os players
-	a.SwooshPlayer, err = a.audioContext.NewPlayerF32(swooshD)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	a.PointPlayer, err = a.audioContext.NewPlayerF32(pointD)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	a.DiePlayer, err = a.audioContext.NewPlayerF32(dieD)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	a.WingPlayer, err = a.audioContext.NewPlayerF32(wingD)
-	if err != nil {
-		log.Fatal(err)
-	}
+	*target = player
 }
