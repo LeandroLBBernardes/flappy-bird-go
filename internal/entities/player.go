@@ -5,9 +5,9 @@ import (
 )
 
 const (
-	playerDownflapSprite = "assets/sprites/{0}bird-downflap.png"
-	playerMidflapSprite  = "assets/sprites/{0}bird-midflap.png"
-	playerUpflapSprite   = "assets/sprites/{0}bird-upflap.png"
+	PLAYER_DOWN_SPRITE_PATH = "../../assets/sprites/{0}bird-downflap.png"
+	PLAYER_MID_SPRITE_PATH  = "../../assets/sprites/{0}bird-midflap.png"
+	PLAYER_UP_SPRITE_PATH   = "../../assets/sprites/{0}bird-upflap.png"
 )
 
 // TODO: Criar o player

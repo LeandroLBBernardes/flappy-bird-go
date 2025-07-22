@@ -30,22 +30,22 @@ func NewAudio() *Audio {
 func (a *Audio) init() {
 	a.audioContext = audio.NewContext(SAMPLE_RATE)
 
-	swooshWav, err := os.Open("assets/audio/swoosh.wav")
+	swooshWav, err := os.Open("../../assets/audio/swoosh.wav")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	pointWav, err := os.Open("assets/audio/point.wav")
+	pointWav, err := os.Open("../../assets/audio/point.wav")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	dieWav, err := os.Open("assets/audio/die.wav")
+	dieWav, err := os.Open("../../assets/audio/die.wav")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	wingWav, err := os.Open("assets/audio/wing.wav")
+	wingWav, err := os.Open("../../assets/audio/wing.wav")
 	if err != nil {
 		log.Fatal(err)
 	}

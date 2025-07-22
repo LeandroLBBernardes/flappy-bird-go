@@ -24,6 +24,7 @@ const (
 	GAME_TITLE       = "Flappy Bird"
 	SCALE_BACKGROUND = 1.5
 	TARGET_RATE      = 60
+	GAME_SPEED       = 0.75
 )
 
 type Game struct {
@@ -40,7 +41,7 @@ func (g *Game) Speed() float64 {
 }
 
 func (g *Game) initGame() {
-	g.speed = 0.75
+	g.speed = GAME_SPEED
 	g.scene = enums.SceneMenu
 
 	g.ground = entities.NewGround()
@@ -56,7 +57,6 @@ func NewGame() (ebiten.Game, *Game) {
 	g.initGame()
 
 	fmt.Println("Game Started!")
-	fmt.Println("Scene: ", g.scene)
 	return g, g
 }
 
@@ -71,7 +71,6 @@ func (g *Game) Update() error {
 			}
 			g.audio.SwooshPlayer.Play()
 			g.scene = enums.SceneGame
-			fmt.Println("Scene: ", g.scene)
 		}
 	case enums.SceneGame:
 		if inpututil.IsKeyJustPressed(ebiten.KeySpace) || inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
@@ -80,16 +79,10 @@ func (g *Game) Update() error {
 			}
 			g.audio.DiePlayer.Play()
 			g.scene = enums.SceneGameOver
-			fmt.Println("Scene: ", g.scene)
 		}
 	case enums.SceneGameOver:
 		if inpututil.IsKeyJustPressed(ebiten.KeySpace) || inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-			if err := g.audio.PointPlayer.Rewind(); err != nil {
-				return err
-			}
-			g.audio.PointPlayer.Play()
 			g.scene = enums.SceneMenu
-			fmt.Println("Scene: ", g.scene)
 			randomizeBackground = true
 		}
 	}
@@ -154,9 +147,6 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 	return bb.Dx(), bb.Dy()
 }
 
-// fazer uma forma dinamica para escalar esse background de acordo
-// com o tamanho da tela do usuario
-// talvez fazer dinamico para quando o usuario mudar de um monitor para outro
 func setScreenProperties(g *Game) {
 	bb := g.assets.BackgroundDay.Bounds()
 

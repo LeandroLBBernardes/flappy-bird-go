@@ -7,6 +7,14 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
+const (
+	FAVICON_PATH          = "../../assets/favicon.png"
+	BACKGROUND_DAY_PATH   = "../../assets/sprites/background-day.png"
+	BACKGROUND_NIGHT_PATH = "../../assets/sprites/background-night.png"
+	MENU_PATH             = "../../assets/sprites/message.png"
+	GAMEOVER_PATH         = "../../assets/sprites/gameover.png"
+)
+
 type Assets struct {
 	Icon            *ebiten.Image
 	BackgroundDay   *ebiten.Image
@@ -17,35 +25,23 @@ type Assets struct {
 
 func NewAssets() *Assets {
 	a := &Assets{}
-	a.init()
+	a.loadAssets()
 	return a
 }
 
-func (a *Assets) init() {
-	var err error
+func (a *Assets) loadAssets() {
+	loadImage(&a.Icon, FAVICON_PATH)
+	loadImage(&a.BackgroundDay, BACKGROUND_DAY_PATH)
+	loadImage(&a.BackgroundNight, BACKGROUND_NIGHT_PATH)
+	loadImage(&a.Menu, MENU_PATH)
+	loadImage(&a.GameOver, GAMEOVER_PATH)
+}
 
-	a.Icon, _, err = ebitenutil.NewImageFromFile("assets/favicon.png")
+func loadImage(target **ebiten.Image, path string) {
+	img, _, err := ebitenutil.NewImageFromFile(path)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("error to file image: %v", err)
 	}
 
-	a.BackgroundDay, _, err = ebitenutil.NewImageFromFile("assets/sprites/background-day.png")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	a.BackgroundNight, _, err = ebitenutil.NewImageFromFile("assets/sprites/background-night.png")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	a.Menu, _, err = ebitenutil.NewImageFromFile("assets/sprites/message.png")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	a.GameOver, _, err = ebitenutil.NewImageFromFile("assets/sprites/gameover.png")
-	if err != nil {
-		log.Fatal(err)
-	}
+	*target = img
 }

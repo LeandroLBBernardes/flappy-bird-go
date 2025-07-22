@@ -4,6 +4,10 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+const (
+	PIPE_SPRITE_PATH = "../../assets/sprites/pipe-green.png"
+)
+
 // TODO: Criar o pipe
 type Pipe struct {
 	posY float64

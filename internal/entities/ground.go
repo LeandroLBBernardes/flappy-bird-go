@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	groundSpritePath = "assets/sprites/base.png"
+	GROUND_SPRITE_PATH = "../../assets/sprites/base.png"
 )
 
 type Ground struct {
@@ -27,7 +27,7 @@ func NewGround() *Ground {
 func (g *Ground) init() {
 	var err error
 	g.posX = 0
-	g.sprite, _, err = ebitenutil.NewImageFromFile(groundSpritePath)
+	g.sprite, _, err = ebitenutil.NewImageFromFile(GROUND_SPRITE_PATH)
 	if err != nil {
 		log.Fatal(err)
 	}
