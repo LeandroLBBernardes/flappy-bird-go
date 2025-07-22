@@ -6,6 +6,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/audio/wav"
+	"leandro.com/v2/internal/enums"
 )
 
 const (
@@ -30,6 +31,16 @@ func NewAudio() *Audio {
 	a := &Audio{}
 	a.loadAudios()
 	return a
+}
+
+func (a *Audio) PlayOnce(audioType enums.AudioType) {
+	player := audioPlayerFactory(a, audioType)
+
+	if err := player.Rewind(); err != nil {
+		log.Fatalf("error to play audio: %v", err)
+	}
+
+	player.Play()
 }
 
 func (a *Audio) loadAudios() {
@@ -72,4 +83,20 @@ func setPlayer(target **audio.Player, context *audio.Context, wavStream *wav.Str
 	}
 
 	*target = player
+}
+
+func audioPlayerFactory(a *Audio, audioType enums.AudioType) *audio.Player {
+	switch audioType {
+	case enums.SwooshAudio:
+		return a.SwooshPlayer
+	case enums.PointAudio:
+		return a.PointPlayer
+	case enums.DieAudio:
+		return a.DiePlayer
+	case enums.WingAudio:
+		return a.WingPlayer
+	default:
+		log.Fatalf("invalid audio type")
+		return nil
+	}
 }

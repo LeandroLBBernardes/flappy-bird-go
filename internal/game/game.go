@@ -66,18 +66,12 @@ func (g *Game) Update() error {
 	switch g.scene {
 	case enums.SceneMenu:
 		if inpututil.IsKeyJustPressed(ebiten.KeySpace) || inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-			if err := g.audio.SwooshPlayer.Rewind(); err != nil {
-				return err
-			}
-			g.audio.SwooshPlayer.Play()
+			g.audio.PlayOnce(enums.SwooshAudio)
 			g.scene = enums.SceneGame
 		}
 	case enums.SceneGame:
 		if inpututil.IsKeyJustPressed(ebiten.KeySpace) || inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-			if err := g.audio.DiePlayer.Rewind(); err != nil {
-				return err
-			}
-			g.audio.DiePlayer.Play()
+			g.audio.PlayOnce(enums.DieAudio)
 			g.scene = enums.SceneGameOver
 		}
 	case enums.SceneGameOver:
