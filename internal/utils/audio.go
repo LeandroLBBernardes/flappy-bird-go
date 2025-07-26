@@ -35,6 +35,7 @@ func NewAudio() *Audio {
 
 func (a *Audio) PlayOnce(audioType enums.AudioType) {
 	player := audioPlayerFactory(a, audioType)
+	player.SetVolume(0.1)
 
 	if err := player.Rewind(); err != nil {
 		log.Fatalf("error to play audio: %v", err)
