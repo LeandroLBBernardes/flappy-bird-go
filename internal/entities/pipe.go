@@ -39,10 +39,12 @@ func (p *Pipe) init() {
 }
 
 func (p *Pipe) Update() {
+	move := constants.GAME_SPEED * constants.DELTA_TIME
+
 	if p.posX <= -float64(p.spriteWidth) {
-		p.posX = float64(p.screenWidth + constants.PIPE_SPACING - p.spriteWidth)
+		p.posX = float64(p.screenWidth + constants.PIPE_SPACING + (p.spriteWidth / 2))
 	} else {
-		p.posX -= constants.GAME_SPEED
+		p.posX -= move
 	}
 }
 

@@ -35,10 +35,12 @@ func (g *Ground) init() {
 }
 
 func (g *Ground) Update() {
+	move := constants.GAME_SPEED * constants.DELTA_TIME
+
 	if g.posX <= -float64(g.spriteWidth) {
 		g.posX += float64(g.spriteWidth)
 	} else {
-		g.posX -= constants.GAME_SPEED
+		g.posX -= move
 	}
 }
 
