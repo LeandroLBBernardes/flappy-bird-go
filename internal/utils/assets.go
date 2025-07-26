@@ -13,7 +13,6 @@ const (
 	BACKGROUND_NIGHT_PATH = "../../assets/sprites/background-night.png"
 	MENU_PATH             = "../../assets/sprites/message.png"
 	GAMEOVER_PATH         = "../../assets/sprites/gameover.png"
-	PAUSE_PATH            = "../../assets/sprites/pause.png"
 )
 
 type Assets struct {
@@ -22,7 +21,6 @@ type Assets struct {
 	BackgroundNight *ebiten.Image
 	Menu            *ebiten.Image
 	GameOver        *ebiten.Image
-	Pause           *ebiten.Image
 }
 
 func NewAssets() *Assets {
@@ -31,16 +29,40 @@ func NewAssets() *Assets {
 	return a
 }
 
-func (a *Assets) loadAssets() {
-	loadImage(&a.Icon, FAVICON_PATH)
-	loadImage(&a.BackgroundDay, BACKGROUND_DAY_PATH)
-	loadImage(&a.BackgroundNight, BACKGROUND_NIGHT_PATH)
-	loadImage(&a.Menu, MENU_PATH)
-	loadImage(&a.GameOver, GAMEOVER_PATH)
-	loadImage(&a.Pause, PAUSE_PATH)
+func LoadImage(path string) *ebiten.Image {
+	img, _, err := ebitenutil.NewImageFromFile(path)
+	if err != nil {
+		log.Fatalf("error to load image: %v", err)
+	}
+
+	return img
 }
 
-func loadImage(target **ebiten.Image, path string) {
+func DrawCentralizedImage(image *ebiten.Image, screen *ebiten.Image) {
+	op := &ebiten.DrawImageOptions{}
+
+	imageWidth := float64(image.Bounds().Dx())
+	imageHeight := float64(image.Bounds().Dy())
+	screenWidth := float64(screen.Bounds().Dx())
+	screenHeight := float64(screen.Bounds().Dy())
+	posX := (screenWidth - imageWidth) / 2
+	posY := (screenHeight - imageHeight) / 2
+
+	op.GeoM.Translate(posX, posY)
+	op.GeoM.Scale(1, 1)
+
+	screen.DrawImage(image, op)
+}
+
+func (a *Assets) loadAssets() {
+	loadImageFromTarget(&a.Icon, FAVICON_PATH)
+	loadImageFromTarget(&a.BackgroundDay, BACKGROUND_DAY_PATH)
+	loadImageFromTarget(&a.BackgroundNight, BACKGROUND_NIGHT_PATH)
+	loadImageFromTarget(&a.Menu, MENU_PATH)
+	loadImageFromTarget(&a.GameOver, GAMEOVER_PATH)
+}
+
+func loadImageFromTarget(target **ebiten.Image, path string) {
 	img, _, err := ebitenutil.NewImageFromFile(path)
 	if err != nil {
 		log.Fatalf("error to file image: %v", err)

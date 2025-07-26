@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"image"
 	_ "image/png"
-	"math/rand"
-	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 
@@ -14,11 +12,6 @@ import (
 	"leandro.com/v2/internal/enums"
 	"leandro.com/v2/internal/scenes"
 	"leandro.com/v2/internal/utils"
-)
-
-var (
-	randomizeBackground bool = true
-	background          *ebiten.Image
 )
 
 type Game struct {
@@ -67,18 +60,21 @@ func (g *Game) GetGroundEntitie() *entities.Ground {
 }
 
 func (g *Game) Update() error {
-	updateRandomBackground(g)
-
 	g.currentScene.Update()
 
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	drawBackground(screen)
+	g.drawBackground(screen)
 	g.currentScene.Draw(screen)
-
 	g.ground.Draw(screen)
+}
+
+func (g *Game) drawBackground(screen *ebiten.Image) {
+	opBg := &ebiten.DrawImageOptions{}
+	opBg.GeoM.Scale(1, 1)
+	screen.DrawImage(g.assets.BackgroundDay, opBg)
 }
 
 func (g *Game) ChangeScene(sceneType enums.SceneType) {
@@ -104,22 +100,4 @@ func setScreenProperties(g *Game) {
 func setGameProperties() {
 	ebiten.SetVsyncEnabled(false)
 	ebiten.SetTPS(constants.TARGET_RATE)
-}
-
-func updateRandomBackground(g *Game) {
-	if randomizeBackground {
-		r := rand.New(rand.NewSource(time.Now().UnixNano()))
-		if r.Intn(2) == 0 {
-			background = g.assets.BackgroundDay
-		} else {
-			background = g.assets.BackgroundNight
-		}
-	}
-	randomizeBackground = false
-}
-
-func drawBackground(screen *ebiten.Image) {
-	opBg := &ebiten.DrawImageOptions{}
-	opBg.GeoM.Scale(1, 1)
-	screen.DrawImage(background, opBg)
 }
