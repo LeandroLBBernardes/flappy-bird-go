@@ -8,6 +8,11 @@ import (
 	"leandro.com/v2/internal/utils"
 )
 
+const (
+	PIPE_COUNT   = 3
+	PIPE_SPACING = 150.0
+)
+
 type GameScene struct {
 	gc GameContext
 
@@ -16,8 +21,10 @@ type GameScene struct {
 
 	ground  *entities.Ground
 	counter *entities.Counter
-	audio   *utils.Audio
-	assets  *utils.Assets
+	pipes   [PIPE_COUNT]*entities.Pipe
+
+	audio  *utils.Audio
+	assets *utils.Assets
 }
 
 func NewGameScene(gc GameContext) *GameScene {
@@ -27,6 +34,12 @@ func NewGameScene(gc GameContext) *GameScene {
 	gs.audio = gc.GetAudio()
 	gs.assets = gc.GetAssets()
 	gs.counter = entities.NewCounter()
+
+	screenWidth := gs.assets.BackgroundDay.Bounds().Dx()
+
+	for i := 0; i < PIPE_COUNT; i++ {
+		gs.pipes[i] = entities.NewPipe(float64(screenWidth + i*PIPE_SPACING))
+	}
 
 	return gs
 }
@@ -44,9 +57,16 @@ func (gs *GameScene) Update() {
 
 	gs.gameOver()
 	gs.ground.Update()
+
+	for _, pipe := range gs.pipes {
+		pipe.Update()
+	}
 }
 
 func (gs *GameScene) Draw(screen *ebiten.Image) {
+	for _, pipe := range gs.pipes {
+		pipe.Draw(screen)
+	}
 	gs.counter.Draw(screen)
 }
 

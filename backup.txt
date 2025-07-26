@@ -43,3 +43,31 @@ Testes para desenhar imagem no centro
 
 // 	x += imageWidth // move para a próxima posição
 // }
+
+
+Testes para desenhar os canos
+=============================
+
+func (p *Pipe) drawDownPipe(screen *ebiten.Image) {
+	op := &ebiten.DrawImageOptions{}
+
+	screenHeight := float64(screen.Bounds().Dy())
+	posY := screenHeight - (p.posY - GAP)
+
+	op.GeoM.Scale(1, 1)
+	op.GeoM.Translate(p.posX, posY)
+
+	screen.DrawImage(p.spriteUp, op)
+}
+
+func (p *Pipe) drawUpPipe(screen *ebiten.Image) {
+	op := &ebiten.DrawImageOptions{}
+
+	screenHeight := float64(screen.Bounds().Dy())
+	posY := screenHeight - (p.posY + GAP)
+
+	op.GeoM.Scale(1, -1)
+	op.GeoM.Translate(p.posX, posY)
+
+	screen.DrawImage(p.spriteDown, op)
+}
