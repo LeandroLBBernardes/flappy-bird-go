@@ -6,4 +6,5 @@ const (
 	TARGET_RATE      = 60
 	GAME_SPEED       = 0.85
 	SPRITE_PATH      = "../../assets/sprites"
+	PIPE_SPACING     = 150.0
 )

@@ -22,11 +22,11 @@ type Pipe struct {
 	spriteDown *ebiten.Image
 }
 
-func NewPipe(posX float64) *Pipe {
+func NewPipe(posX float64, screenWidth int) *Pipe {
 	p := &Pipe{}
 	p.init()
 	p.spriteWidth = p.spriteUp.Bounds().Dx()
-	p.screenWidth = int(posX)
+	p.screenWidth = screenWidth
 
 	p.posX = posX
 	p.posY = 300.0
@@ -39,11 +39,11 @@ func (p *Pipe) init() {
 }
 
 func (p *Pipe) Update() {
-	p.posX -= constants.GAME_SPEED
-
-	// if p.posX <= -float64(p.spriteWidth) {
-	// 	p.posX += float64(p.screenWidth + (p.spriteWidth + 100))
-	// }
+	if p.posX <= -float64(p.spriteWidth) {
+		p.posX = float64(p.screenWidth + constants.PIPE_SPACING - p.spriteWidth)
+	} else {
+		p.posX -= constants.GAME_SPEED
+	}
 }
 
 func (p *Pipe) Draw(screen *ebiten.Image) {

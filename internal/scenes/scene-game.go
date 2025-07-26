@@ -3,15 +3,13 @@ package scenes
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"leandro.com/v2/internal/constants"
 	"leandro.com/v2/internal/entities"
 	"leandro.com/v2/internal/enums"
 	"leandro.com/v2/internal/utils"
 )
 
-const (
-	PIPE_COUNT   = 3
-	PIPE_SPACING = 150.0
-)
+const PIPE_COUNT = 3
 
 type GameScene struct {
 	gc GameContext
@@ -38,7 +36,7 @@ func NewGameScene(gc GameContext) *GameScene {
 	screenWidth := gs.assets.BackgroundDay.Bounds().Dx()
 
 	for i := 0; i < PIPE_COUNT; i++ {
-		gs.pipes[i] = entities.NewPipe(float64(screenWidth + i*PIPE_SPACING))
+		gs.pipes[i] = entities.NewPipe(float64(screenWidth+i*constants.PIPE_SPACING), screenWidth)
 	}
 
 	return gs

@@ -35,10 +35,10 @@ func (g *Ground) init() {
 }
 
 func (g *Ground) Update() {
-	g.posX = g.posX - constants.GAME_SPEED
-
 	if g.posX <= -float64(g.spriteWidth) {
 		g.posX += float64(g.spriteWidth)
+	} else {
+		g.posX -= constants.GAME_SPEED
 	}
 }
 
