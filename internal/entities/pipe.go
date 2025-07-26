@@ -1,6 +1,8 @@
 package entities
 
 import (
+	"math/rand"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"leandro.com/v2/internal/constants"
 	"leandro.com/v2/internal/utils"
@@ -29,7 +31,7 @@ func NewPipe(posX float64, screenWidth int) *Pipe {
 	p.screenWidth = screenWidth
 
 	p.posX = posX
-	p.posY = 300.0
+	p.posY = randomHeight()
 	return p
 }
 
@@ -42,6 +44,7 @@ func (p *Pipe) Update() {
 	move := constants.GAME_SPEED * constants.DELTA_TIME
 
 	if p.posX <= -float64(p.spriteWidth) {
+		p.posY = randomHeight()
 		p.posX = float64(p.screenWidth + constants.PIPE_SPACING + (p.spriteWidth / 2))
 	} else {
 		p.posX -= move
@@ -63,4 +66,10 @@ func (p *Pipe) drawPipe(screen *ebiten.Image, sprite *ebiten.Image, scale float6
 
 	op.GeoM.Translate(p.posX, posY)
 	screen.DrawImage(sprite, op)
+}
+
+func randomHeight() float64 {
+	min := 190.0
+	max := 410.0
+	return min + rand.Float64()*(max-min)
 }
