@@ -7,4 +7,5 @@ const (
 	PointAudio
 	DieAudio
 	WingAudio
+	HitAudio
 )

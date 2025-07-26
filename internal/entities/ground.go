@@ -24,6 +24,10 @@ func NewGround() *Ground {
 	return g
 }
 
+func (g *Ground) GetGroundHeight() float64 {
+	return float64(g.sprite.Bounds().Dy())
+}
+
 func (g *Ground) init() {
 	var err error
 	g.posX = 0

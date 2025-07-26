@@ -10,7 +10,7 @@ import (
 
 const (
 	PIPE_SPRITE_PATH = "../../assets/sprites/pipe-green.png"
-	GAP              = 40.0
+	GAP              = 36.0
 )
 
 type Pipe struct {

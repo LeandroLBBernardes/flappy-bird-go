@@ -16,6 +16,7 @@ const (
 	POINT_AUDIO_PATH  = "../../assets/audio/point.wav"
 	DIE_AUDIO_PATH    = "../../assets/audio/die.wav"
 	WING_AUDIO_PATH   = "../../assets/audio/wing.wav"
+	HIT_AUDIO_PATH    = "../../assets/audio/hit.wav"
 )
 
 type Audio struct {
@@ -25,6 +26,7 @@ type Audio struct {
 	PointPlayer  *audio.Player
 	DiePlayer    *audio.Player
 	WingPlayer   *audio.Player
+	HitPlayer    *audio.Player
 }
 
 func NewAudio() *Audio {
@@ -51,6 +53,7 @@ func (a *Audio) loadAudios() {
 	loadAudio(&a.PointPlayer, a.audioContext, POINT_AUDIO_PATH)
 	loadAudio(&a.DiePlayer, a.audioContext, DIE_AUDIO_PATH)
 	loadAudio(&a.WingPlayer, a.audioContext, WING_AUDIO_PATH)
+	loadAudio(&a.HitPlayer, a.audioContext, HIT_AUDIO_PATH)
 }
 
 func loadAudio(target **audio.Player, context *audio.Context, path string) {
@@ -96,6 +99,8 @@ func audioPlayerFactory(a *Audio, audioType enums.AudioType) *audio.Player {
 		return a.DiePlayer
 	case enums.WingAudio:
 		return a.WingPlayer
+	case enums.HitAudio:
+		return a.HitPlayer
 	default:
 		log.Fatalf("invalid audio type")
 		return nil

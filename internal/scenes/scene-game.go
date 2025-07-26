@@ -22,6 +22,9 @@ type GameScene struct {
 	player  *entities.Player
 	pipes   [PIPE_COUNT]*entities.Pipe
 
+	screenWidth  int
+	screenheight int
+
 	audio  *utils.Audio
 	assets *utils.Assets
 }
@@ -34,33 +37,33 @@ func NewGameScene(gc GameContext) *GameScene {
 	gs.audio = gc.GetAudio()
 	gs.assets = gc.GetAssets()
 
-	screenWidth := gs.assets.BackgroundDay.Bounds().Dx()
-	screenheight := gs.assets.BackgroundDay.Bounds().Dy()
+	gs.screenWidth = gs.assets.BackgroundDay.Bounds().Dx()
+	gs.screenheight = gs.assets.BackgroundDay.Bounds().Dy()
 
 	gs.counter = entities.NewCounter()
-	gs.player = entities.NewPlayer(screenWidth, screenheight)
+	gs.player = entities.NewPlayer(gs.screenWidth, gs.screenheight)
 
 	for i := 0; i < PIPE_COUNT; i++ {
-		gs.pipes[i] = entities.NewPipe(float64(screenWidth+i*constants.PIPE_SPACING), screenWidth)
+		gs.pipes[i] = entities.NewPipe(float64(gs.screenWidth+i*constants.PIPE_SPACING), gs.screenWidth)
 	}
 
 	return gs
 }
 
 func (gs *GameScene) Update() {
+	gs.gameOver()
 	if gs.isGameOver {
-		gs.gc.ChangeScene(enums.SceneMenu)
+		return
 	}
 
 	gs.pauseGame()
-
 	if gs.isPaused {
 		return
 	}
 
-	gs.gameOver()
+	groundCollisionHeight := float64(gs.screenheight) - gs.ground.GetGroundHeight()
 
-	gs.player.Update(gs.audio)
+	gs.player.Update(gs.audio, groundCollisionHeight, gs)
 	gs.ground.Update()
 
 	for _, pipe := range gs.pipes {
@@ -75,6 +78,10 @@ func (gs *GameScene) Draw(screen *ebiten.Image) {
 		pipe.Draw(screen)
 	}
 	gs.counter.Draw(screen)
+
+	if gs.isGameOver {
+		utils.DrawCentralizedImage(gs.assets.GameOver, screen)
+	}
 }
 
 func (gs *GameScene) pauseGame() {
@@ -84,7 +91,11 @@ func (gs *GameScene) pauseGame() {
 }
 
 func (gs *GameScene) gameOver() {
-	if inpututil.IsKeyJustPressed(ebiten.KeyG) {
-		gs.isGameOver = true
+	if gs.isGameOver && (inpututil.IsKeyJustPressed(ebiten.KeySpace) || inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft)) {
+		gs.gc.ChangeScene(enums.SceneMenu)
 	}
+}
+
+func (gs *GameScene) SetGameOver() {
+	gs.isGameOver = true
 }
