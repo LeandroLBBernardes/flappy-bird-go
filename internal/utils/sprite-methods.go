@@ -24,7 +24,7 @@ func DrawCentralizedImage(image *ebiten.Image, screen *ebiten.Image) {
 	screenWidth := float64(screen.Bounds().Dx())
 	screenHeight := float64(screen.Bounds().Dy())
 	posX := (screenWidth - imageWidth) / 2
-	posY := (screenHeight - imageHeight) / 2
+	posY := (screenHeight - imageHeight - 112) / 2
 
 	op.GeoM.Translate(posX, posY)
 	op.GeoM.Scale(1, 1)

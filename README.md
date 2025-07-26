@@ -2,11 +2,10 @@
 
 Jogo do flappy bird feito em go
 
-## Melhorias
-- Criar types (evitar referencia circular)
-- Usar injecao de dependencia
-- Criar getters
+## TODO
 
-- Adicionar Player State Machine
-- Adicionar Scene State Machine
-- Adicionar Pause State
+[ ] - Excluir backups
+[ ] - Melhorar Readme
+[ ] - Colisao com canos
+[ ] - Pontuacao
+[ ] - Gerar build
