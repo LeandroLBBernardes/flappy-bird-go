@@ -48,12 +48,6 @@ O principal intuito deste projeto foi explorar e aprender a linguagem Go, já qu
 go run .
 ```
 
-### 📦 Baixar o executável (Windows)
-
-Se preferir, você pode baixar a versão compilada diretamente na seção [releases](https://github.com/LeandroLBBernardes/flappy-bird-go/releases/tag/v1.0.0) do repositório com o nome `flappy-bird-go.exe`.
-
-**OBS:** ⚠️ Atualmente, o binário está disponível apenas para Windows.
-
 ## 🕹️ Comandos
 
 - Barra de Espaço ou Clique do Mouse — Pular  
