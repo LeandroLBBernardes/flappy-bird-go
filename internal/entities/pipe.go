@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"image"
 	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -10,27 +11,29 @@ import (
 
 const (
 	PIPE_SPRITE_PATH = "../../assets/sprites/pipe-green.png"
-	GAP              = 36.0
+	GAP              = 38
 )
 
 type Pipe struct {
 	posY float64
-	posX float64
+	PosX float64
 
-	spriteWidth int
+	SpriteWidth int
 	screenWidth int
 
 	spriteUp   *ebiten.Image
 	spriteDown *ebiten.Image
+
+	AlreadyPassed bool
 }
 
 func NewPipe(posX float64, screenWidth int) *Pipe {
 	p := &Pipe{}
 	p.init()
-	p.spriteWidth = p.spriteUp.Bounds().Dx()
+	p.SpriteWidth = p.spriteUp.Bounds().Dx()
 	p.screenWidth = screenWidth
 
-	p.posX = posX
+	p.PosX = posX
 	p.posY = randomHeight()
 	return p
 }
@@ -43,11 +46,12 @@ func (p *Pipe) init() {
 func (p *Pipe) Update() {
 	move := constants.GAME_SPEED * constants.DELTA_TIME
 
-	if p.posX <= -float64(p.spriteWidth) {
+	if p.PosX <= -float64(p.SpriteWidth) {
 		p.posY = randomHeight()
-		p.posX = float64(p.screenWidth + constants.PIPE_SPACING + (p.spriteWidth / 2))
+		p.PosX = float64(p.screenWidth + constants.PIPE_SPACING + (p.SpriteWidth / 2))
+		p.AlreadyPassed = false
 	} else {
-		p.posX -= move
+		p.PosX -= move
 	}
 }
 
@@ -64,7 +68,7 @@ func (p *Pipe) drawPipe(screen *ebiten.Image, sprite *ebiten.Image, scale float6
 
 	op.GeoM.Scale(1.0, 1.0*scale)
 
-	op.GeoM.Translate(p.posX, posY)
+	op.GeoM.Translate(p.PosX, posY)
 	screen.DrawImage(sprite, op)
 }
 
@@ -72,4 +76,22 @@ func randomHeight() float64 {
 	min := 190.0
 	max := 410.0
 	return min + rand.Float64()*(max-min)
+}
+
+func (p *Pipe) GetCollisionRects(screenHeight float64) (image.Rectangle, image.Rectangle) {
+	rectUp := image.Rect(
+		int(p.PosX),
+		int(screenHeight-p.posY-GAP),
+		int(p.PosX)+p.SpriteWidth,
+		0,
+	)
+
+	rectDown := image.Rect(
+		int(p.PosX),
+		int(screenHeight-p.posY+GAP),
+		int(p.PosX)+p.SpriteWidth,
+		int(screenHeight),
+	)
+
+	return rectUp, rectDown
 }

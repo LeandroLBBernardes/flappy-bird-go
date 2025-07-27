@@ -68,6 +68,21 @@ func (gs *GameScene) Update() {
 
 	for _, pipe := range gs.pipes {
 		pipe.Update()
+
+		pipeRectUp, pipeRectDown := pipe.GetCollisionRects(float64(gs.screenheight))
+
+		if gs.player.GetCollisionRect().Overlaps(pipeRectUp) || gs.player.GetCollisionRect().Overlaps(pipeRectDown) {
+			gs.audio.PlayOnce(enums.HitAudio)
+			gs.audio.PlayOnce(enums.DieAudio)
+			gs.SetGameOver()
+			break
+		}
+
+		if !pipe.AlreadyPassed && gs.player.PosX+(gs.player.SpriteWidth/2) > pipe.PosX+float64(pipe.SpriteWidth)/2 {
+			pipe.AlreadyPassed = true
+			gs.counter.PlusValue()
+			gs.audio.PlayOnce(enums.PointAudio)
+		}
 	}
 }
 

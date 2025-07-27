@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"image"
 	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -20,11 +21,14 @@ const (
 
 type Player struct {
 	posY float64
-	posX float64
+	PosX float64
 	velY float64
 
 	screenHeight int
 	screenWidth  int
+
+	SpriteWidth  float64
+	SpriteHeight float64
 
 	sprites [3]*ebiten.Image
 
@@ -43,9 +47,12 @@ func NewPlayer(screenWidth int, screenHeight int) *Player {
 	p.screenHeight = screenHeight
 	p.screenWidth = screenWidth
 
-	imageHeight := float64(p.sprites[0].Bounds().Dy())
-	p.posY = (float64(screenHeight) - imageHeight) / 2
-	p.posX = 40
+	p.SpriteHeight = float64(p.sprites[0].Bounds().Dy())
+
+	p.posY = (float64(screenHeight) - p.SpriteHeight) / 2
+	p.PosX = 40
+
+	p.SpriteWidth = float64(p.sprites[0].Bounds().Dx())
 
 	return p
 }
@@ -78,7 +85,7 @@ func (p *Player) Draw(screen *ebiten.Image) {
 	op.GeoM.Translate(-float64(w)/2, -float64(h)/2)
 	op.GeoM.Rotate(p.rotation)
 	op.GeoM.Scale(1, 1)
-	op.GeoM.Translate(math.Floor(p.posX+float64(w)/2), math.Floor(p.posY+float64(h)/2))
+	op.GeoM.Translate(math.Floor(p.PosX+float64(w)/2), math.Floor(p.posY+float64(h)/2))
 
 	screen.DrawImage(p.sprites[p.imageIndex], op)
 }
@@ -136,4 +143,13 @@ func (p *Player) checkSkyCollision(spriteHeight float64, audio *utils.Audio, gc 
 		audio.PlayOnce(enums.DieAudio)
 		gc.SetGameOver()
 	}
+}
+
+func (p *Player) GetCollisionRect() image.Rectangle {
+	return image.Rect(
+		int(p.PosX),
+		int(p.posY),
+		int(p.PosX+p.SpriteWidth),
+		int(p.posY+p.SpriteHeight),
+	)
 }
