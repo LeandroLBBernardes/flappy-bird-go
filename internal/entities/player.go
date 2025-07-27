@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	PLAYER_DOWN_SPRITE_PATH = "../../assets/sprites/yellowbird-downflap.png"
-	PLAYER_MID_SPRITE_PATH  = "../../assets/sprites/yellowbird-midflap.png"
-	PLAYER_UP_SPRITE_PATH   = "../../assets/sprites/yellowbird-upflap.png"
+	PLAYER_DOWN_SPRITE_PATH = "assets/sprites/yellowbird-downflap.png"
+	PLAYER_MID_SPRITE_PATH  = "assets/sprites/yellowbird-midflap.png"
+	PLAYER_UP_SPRITE_PATH   = "assets/sprites/yellowbird-upflap.png"
 	GRAVITY                 = 800.0
 	JUMP_FORCE              = 250.0
 )
@@ -37,30 +37,27 @@ type Player struct {
 	tiltTimer      float64
 	targetRotation float64
 	animationTimer float64
+
+	assets *utils.Assets
 }
 
-func NewPlayer(screenWidth int, screenHeight int) *Player {
+func NewPlayer(screenWidth int, screenHeight int, assets *utils.Assets) *Player {
 	p := &Player{}
-
+	p.assets = assets
 	p.loadSprites()
-
 	p.screenHeight = screenHeight
 	p.screenWidth = screenWidth
-
 	p.SpriteHeight = float64(p.sprites[0].Bounds().Dy())
-
 	p.posY = (float64(screenHeight) - p.SpriteHeight) / 2
 	p.PosX = 40
-
 	p.SpriteWidth = float64(p.sprites[0].Bounds().Dx())
-
 	return p
 }
 
 func (p *Player) loadSprites() {
-	p.sprites[0] = utils.LoadImage(PLAYER_MID_SPRITE_PATH)
-	p.sprites[1] = utils.LoadImage(PLAYER_DOWN_SPRITE_PATH)
-	p.sprites[2] = utils.LoadImage(PLAYER_UP_SPRITE_PATH)
+	p.sprites[0] = p.assets.LoadImage(PLAYER_MID_SPRITE_PATH)
+	p.sprites[1] = p.assets.LoadImage(PLAYER_DOWN_SPRITE_PATH)
+	p.sprites[2] = p.assets.LoadImage(PLAYER_UP_SPRITE_PATH)
 }
 
 func (p *Player) Update(audio *utils.Audio, groundCollisionHeight float64, gc GameContext) {

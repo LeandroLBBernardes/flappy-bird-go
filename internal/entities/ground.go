@@ -1,41 +1,34 @@
 package entities
 
 import (
-	"log"
-
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"leandro.com/v2/internal/constants"
+	"leandro.com/v2/internal/utils"
 )
 
 const (
-	GROUND_SPRITE_PATH = "../../assets/sprites/base.png"
+	GROUND_SPRITE_PATH = "assets/sprites/base.png"
 )
 
 type Ground struct {
 	sprite      *ebiten.Image
 	posX        float64
 	spriteWidth int
+
+	assets *utils.Assets
 }
 
-func NewGround() *Ground {
+func NewGround(assets *utils.Assets) *Ground {
 	g := &Ground{}
-	g.init()
+	g.assets = assets
+	g.posX = 0
+	g.sprite = g.assets.LoadImage(GROUND_SPRITE_PATH)
+	g.spriteWidth = g.sprite.Bounds().Dx()
 	return g
 }
 
 func (g *Ground) GetGroundHeight() float64 {
 	return float64(g.sprite.Bounds().Dy())
-}
-
-func (g *Ground) init() {
-	var err error
-	g.posX = 0
-	g.sprite, _, err = ebitenutil.NewImageFromFile(GROUND_SPRITE_PATH)
-	if err != nil {
-		log.Fatal(err)
-	}
-	g.spriteWidth = g.sprite.Bounds().Dx()
 }
 
 func (g *Ground) Update() {

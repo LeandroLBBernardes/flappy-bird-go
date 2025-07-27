@@ -40,11 +40,11 @@ func NewGameScene(gc GameContext) *GameScene {
 	gs.screenWidth = gs.assets.BackgroundDay.Bounds().Dx()
 	gs.screenheight = gs.assets.BackgroundDay.Bounds().Dy()
 
-	gs.counter = entities.NewCounter()
-	gs.player = entities.NewPlayer(gs.screenWidth, gs.screenheight)
+	gs.counter = entities.NewCounter(gs.assets)
+	gs.player = entities.NewPlayer(gs.screenWidth, gs.screenheight, gs.assets)
 
 	for i := 0; i < PIPE_COUNT; i++ {
-		gs.pipes[i] = entities.NewPipe(float64(gs.screenWidth+i*constants.PIPE_SPACING), gs.screenWidth)
+		gs.pipes[i] = entities.NewPipe(float64(gs.screenWidth+i*constants.PIPE_SPACING), gs.screenWidth, gs.assets)
 	}
 
 	return gs

@@ -1,8 +1,9 @@
 package utils
 
 import (
+	"bytes"
+	"embed"
 	"log"
-	"os"
 
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/audio/wav"
@@ -12,11 +13,11 @@ import (
 const (
 	SAMPLE_RATE = 44100
 
-	SWOOSH_AUDIO_PATH = "../../assets/audio/swoosh.wav"
-	POINT_AUDIO_PATH  = "../../assets/audio/point.wav"
-	DIE_AUDIO_PATH    = "../../assets/audio/die.wav"
-	WING_AUDIO_PATH   = "../../assets/audio/wing.wav"
-	HIT_AUDIO_PATH    = "../../assets/audio/hit.wav"
+	SWOOSH_AUDIO_PATH = "assets/audio/swoosh.wav"
+	POINT_AUDIO_PATH  = "assets/audio/point.wav"
+	DIE_AUDIO_PATH    = "assets/audio/die.wav"
+	WING_AUDIO_PATH   = "assets/audio/wing.wav"
+	HIT_AUDIO_PATH    = "assets/audio/hit.wav"
 )
 
 type Audio struct {
@@ -29,9 +30,9 @@ type Audio struct {
 	HitPlayer    *audio.Player
 }
 
-func NewAudio() *Audio {
+func NewAudio(embeddedAssets embed.FS) *Audio {
 	a := &Audio{}
-	a.loadAudios()
+	a.loadAudios(embeddedAssets)
 	return a
 }
 
@@ -46,41 +47,27 @@ func (a *Audio) PlayOnce(audioType enums.AudioType) {
 	player.Play()
 }
 
-func (a *Audio) loadAudios() {
+func (a *Audio) loadAudios(embeddedAssets embed.FS) {
 	a.audioContext = audio.NewContext(SAMPLE_RATE)
 
-	loadAudio(&a.SwooshPlayer, a.audioContext, SWOOSH_AUDIO_PATH)
-	loadAudio(&a.PointPlayer, a.audioContext, POINT_AUDIO_PATH)
-	loadAudio(&a.DiePlayer, a.audioContext, DIE_AUDIO_PATH)
-	loadAudio(&a.WingPlayer, a.audioContext, WING_AUDIO_PATH)
-	loadAudio(&a.HitPlayer, a.audioContext, HIT_AUDIO_PATH)
+	loadEmbeddedAudio(&a.SwooshPlayer, a.audioContext, embeddedAssets, SWOOSH_AUDIO_PATH)
+	loadEmbeddedAudio(&a.PointPlayer, a.audioContext, embeddedAssets, POINT_AUDIO_PATH)
+	loadEmbeddedAudio(&a.DiePlayer, a.audioContext, embeddedAssets, DIE_AUDIO_PATH)
+	loadEmbeddedAudio(&a.WingPlayer, a.audioContext, embeddedAssets, WING_AUDIO_PATH)
+	loadEmbeddedAudio(&a.HitPlayer, a.audioContext, embeddedAssets, HIT_AUDIO_PATH)
 }
 
-func loadAudio(target **audio.Player, context *audio.Context, path string) {
-	wavFile := setAudio(path)
-	wavStream := decodeAudio(wavFile)
-	setPlayer(target, context, wavStream)
-}
-
-func setAudio(path string) *os.File {
-	wavFile, err := os.Open(path)
+func loadEmbeddedAudio(target **audio.Player, context *audio.Context, embeddedAssets embed.FS, path string) {
+	file, err := embeddedAssets.ReadFile(path)
 	if err != nil {
-		log.Fatalf("error to file audio: %v", err)
+		log.Fatalf("error reading embedded audio file %s: %v", path, err)
 	}
 
-	return wavFile
-}
-
-func decodeAudio(wavFile *os.File) *wav.Stream {
-	wavStream, err := wav.DecodeF32(wavFile)
+	wavStream, err := wav.DecodeF32(bytes.NewReader(file))
 	if err != nil {
-		log.Fatalf("error to file audio: %v", err)
+		log.Fatalf("error decoding audio %s: %v", path, err)
 	}
 
-	return wavStream
-}
-
-func setPlayer(target **audio.Player, context *audio.Context, wavStream *wav.Stream) {
 	player, err := context.NewPlayerF32(wavStream)
 	if err != nil {
 		log.Fatalf("error to set player: %v", err)

@@ -1,7 +1,7 @@
 package game
 
 import (
-	"fmt"
+	"embed"
 	"image"
 	_ "image/png"
 
@@ -15,36 +15,32 @@ import (
 )
 
 type Game struct {
-	scene        enums.SceneType
-	speed        float64
+	scene enums.SceneType
+	speed float64
+
 	currentScene scenes.Scene
 
 	ground *entities.Ground
 
 	assets *utils.Assets
 	audio  *utils.Audio
+
+	embeddedAssets embed.FS
 }
 
-func NewGame() (ebiten.Game, *Game) {
+func NewGame(embeddedAssets embed.FS) (ebiten.Game, *Game) {
 	g := &Game{}
-	g.initGame()
-
-	fmt.Println("Game Started!")
-	return g, g
-}
-
-func (g *Game) initGame() {
 	g.speed = constants.GAME_SPEED
 	g.scene = enums.SceneMenu
-
-	g.ground = entities.NewGround()
-	g.assets = utils.NewAssets()
-	g.audio = utils.NewAudio()
-
+	g.embeddedAssets = embeddedAssets
+	g.assets = utils.NewAssets(g.embeddedAssets)
+	g.audio = utils.NewAudio(g.embeddedAssets)
+	g.ground = entities.NewGround(g.assets)
 	g.ChangeScene(enums.SceneMenu)
 
 	setScreenProperties(g)
 	setGameProperties()
+	return g, g
 }
 
 func (g *Game) GetAudio() *utils.Audio {
@@ -53,6 +49,10 @@ func (g *Game) GetAudio() *utils.Audio {
 
 func (g *Game) GetAssets() *utils.Assets {
 	return g.assets
+}
+
+func (g *Game) GetEmbeddedAssets() embed.FS {
+	return g.embeddedAssets
 }
 
 func (g *Game) GetGroundEntitie() *entities.Ground {

@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	PIPE_SPRITE_PATH = "../../assets/sprites/pipe-green.png"
+	PIPE_SPRITE_PATH = "assets/sprites/pipe-green.png"
 	GAP              = 38
 )
 
@@ -25,22 +25,19 @@ type Pipe struct {
 	spriteDown *ebiten.Image
 
 	AlreadyPassed bool
+	assets        *utils.Assets
 }
 
-func NewPipe(posX float64, screenWidth int) *Pipe {
+func NewPipe(posX float64, screenWidth int, assets *utils.Assets) *Pipe {
 	p := &Pipe{}
-	p.init()
+	p.assets = assets
+	p.spriteUp = p.assets.LoadImage(PIPE_SPRITE_PATH)
+	p.spriteDown = p.assets.LoadImage(PIPE_SPRITE_PATH)
 	p.SpriteWidth = p.spriteUp.Bounds().Dx()
 	p.screenWidth = screenWidth
-
 	p.PosX = posX
 	p.posY = randomHeight()
 	return p
-}
-
-func (p *Pipe) init() {
-	p.spriteUp = utils.LoadImage(PIPE_SPRITE_PATH)
-	p.spriteDown = utils.LoadImage(PIPE_SPRITE_PATH)
 }
 
 func (p *Pipe) Update() {

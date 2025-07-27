@@ -13,23 +13,22 @@ type Counter struct {
 	sprites [10]*ebiten.Image
 
 	value int
+
+	assets *utils.Assets
 }
 
-func NewCounter() *Counter {
+func NewCounter(assets *utils.Assets) *Counter {
 	c := &Counter{}
-	c.init()
+	c.assets = assets
 	c.value = 0
-	return c
-}
-
-func (c *Counter) init() {
 	c.loadSprites()
+	return c
 }
 
 func (c *Counter) loadSprites() {
 	for i := range 10 {
 		path := fmt.Sprintf("%s/%d.png", constants.SPRITE_PATH, i)
-		c.sprites[i] = utils.LoadImage(path)
+		c.sprites[i] = c.assets.LoadImage(path)
 	}
 }
 
