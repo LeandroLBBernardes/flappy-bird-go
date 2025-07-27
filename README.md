@@ -25,6 +25,9 @@ O principal intuito deste projeto foi explorar e aprender a linguagem Go, já qu
 ├── internal/
 │   ├── game/
 │   ├── entities/
+│   ├── scenes/
+│   ├── enums/
+│   ├── constants/
 │   └── utils/
 ├── assets/
 │   ├── images/
