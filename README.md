@@ -85,6 +85,6 @@ Durante o desenvolvimento deste projeto, aprendi sobre:
 - Embedding de arquivos estáticos com Go
 - Manipulação básica de áudio e imagens com Ebiten
 
-## 📄 Licença
+## 📄 OBS
 
 Este projeto é apenas para fins educacionais e aprendizado pessoal.
