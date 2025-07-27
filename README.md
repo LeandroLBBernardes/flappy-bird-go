@@ -51,15 +51,14 @@ Se preferir, você pode baixar a versão compilada diretamente na seção [relea
 
 **OBS:** ⚠️ Atualmente, o binário está disponível apenas para Windows.
 
+## 🕹️ Comandos
+
+- Barra de Espaço ou Clique do Mouse — Pular  
+- ESC — Pausar / Retomar o jogo
 
 ## 📸 Preview
 
 ![Gameplay](images/gameplay.gif)
-
-## 🕹️ Comandos
-
-- Barra de Espaço ou Clique do Mouse — Pular
--ESC — Pausar / Retomar o jogo
 
 ## 🐞 Bugs e futuras melhorias
 
