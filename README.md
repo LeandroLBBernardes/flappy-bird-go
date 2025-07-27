@@ -78,6 +78,7 @@ Essa separação aconteceu conforme eu explorava a linguagem e o design, mas per
 Durante o desenvolvimento deste projeto, aprendi sobre:
 
 - Sintaxe da linguagem Go
+- Implementação de Injeção de Dependência e cuidados para evitar referências circulares entre pacotes 
 - Como funciona o game loop em jogos 2D com Ebiten
 - Organização de código em Go
 - Uso de bibliotecas externas como o Ebiten
