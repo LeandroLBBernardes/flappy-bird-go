@@ -61,6 +61,19 @@ Se preferir, você pode baixar a versão compilada diretamente na seção [relea
 - Barra de Espaço ou Clique do Mouse — Pular
 -ESC — Pausar / Retomar o jogo
 
+## 🐞 Bugs e futuras melhorias
+
+*BUG:* Durante o desenvolvimento, implementei a rotação do personagem para simular visualmente o movimento de subida e queda, que também está presente no jogo original.
+No entanto, não consegui resolver o problema de distorção dos pixels causado por essa rotação. Portanto, o resultado visual pode parecer "embaçado" ou distorcido durante a rotação.
+Apesar disso, mantive a rotação no jogo, pois ela contribui para a sensação de movimento e jogabilidade e se aproxima mais ao original.
+
+*Melhoria:* Durante o desenvolvimento, algumas lógicas de detecção de colisão e gerenciamento de estados do jogo acabaram ficando divididas entre a estrutura principal do jogo na GameScene e nas entidades Player, Pipe, Ground e Counter.
+Essa separação aconteceu conforme eu explorava a linguagem e o design, mas percebo que pode prejudicar a manutenibilidade e a clareza do código a longo prazo. Uma possível melhoria futura seria refatorar essas responsabilidades, centralizando regras específicas dentro das entidades correspondentes espalhá-las no loop principal do jogo. 
+
+*Melhoria:* Outra melhoria seria refatorar a divisão de responsabilidades entre GameScene e o arquivo game.go. No momento, o arquivo game.go recebeu responsabilidades que não deveriam ser suas, como carregar e desenhar o Ground para sobreposição na tela de menu.
+
+*Melhoria:* Por fim, uma melhoria interessante na jogabilidade seria implementar um sistema de balanceamento dinâmico da dificuldade. Atualmente, o jogo utiliza uma velocidade constante e um espaçamento fixo entre os canos durante toda a partida. Seria mais desafiador e semelhante ao original ajustar gradualmente a velocidade e o espaçamento conforme o jogador avança, criando uma progressão de dificuldade mais natural.
+
 ## 📚 Aprendizados
 
 Durante o desenvolvimento deste projeto, aprendi sobre:
